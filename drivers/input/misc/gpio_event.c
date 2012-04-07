@@ -20,8 +20,13 @@
 #include <linux/hrtimer.h>
 #include <linux/platform_device.h>
 #include <linux/slab.h>
+
 #ifdef CONFIG_TOUCHSCREEN_ATMEL_SWEEP2WAKE
 #include <linux/atmel_qt602240.h>
+#endif
+
+#ifdef CONFIG_TOUCHSCREEN_CYPRESS_SWEEP2WAKE
+#include <linux/cy8c_tma_ts.h>
 #endif
 
 struct gpio_event {
@@ -178,6 +183,12 @@ static int gpio_event_probe(struct platform_device *pdev)
 #endif
 			sweep2wake_setdev(input_dev);
 			printk(KERN_INFO "[SWEEP2WAKE]: set device %s\n", input_dev->name);
+		}
+#endif
+#ifdef CONFIG_TOUCHSCREEN_CYPRESS_SWEEP2WAKE
+		if (!strcmp(input_dev->name, "pyramid-keypad")) {
+			sweep2wake_setdev(input_dev);
+			printk(KERN_INFO "[sweep2wake]: set device %s\n", input_dev->name);
 		}
 #endif
 	}
