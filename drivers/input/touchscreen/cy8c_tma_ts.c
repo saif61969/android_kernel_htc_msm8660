@@ -1453,13 +1453,9 @@ static int cy8c_ts_resume(struct i2c_client *client)
 #endif
 	ts->unlock_page = 1;
 
-#ifdef CONFIG_TOUCHSCREEN_CYPRESS_SWEEP2WAKE
-	if (s2w_switch == 0) {
-#endif
-		enable_irq(client->irq);
-#ifdef CONFIG_TOUCHSCREEN_CYPRESS_SWEEP2WAKE
-	}
+	enable_irq(client->irq);
 
+#ifdef CONFIG_TOUCHSCREEN_CYPRESS_SWEEP2WAKE
     if (s2w_changed == true)
     {
         s2w_switch = s2w_temp;
