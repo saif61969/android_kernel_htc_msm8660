@@ -200,55 +200,6 @@ int sweep2wake_buttonset(const char * button_name) {
 	return future_button;
 }
 
-#ifdef CONFIG_CMDLINE_OPTIONS
-static int __init atmel_read_s2w_cmdline(char *s2w)
-{
-	if (strcmp(s2w, "2") == 0) {
-		printk(KERN_INFO "[SWEEP2WAKE]: Sweep2Wake enabled with backlight. | s2w='%s'", s2w);
-		s2w_switch = 2;
-		s2w_temp = 2;
-	} else if (strcmp(s2w, "1") == 0) {
-		printk(KERN_INFO "[SWEEP2WAKE]: Sweep2Wake enabled without backlight. | s2w='%s'", s2w);
-		s2w_switch = 1;
-		s2w_temp = 1;
-	} else if (strcmp(s2w, "0") == 0) {
-		printk(KERN_INFO "[SWEEP2WAKE]: Sweep2Wake disabled. | s2w='%s'", s2w);
-		s2w_switch = 0;
-		s2w_temp = 0;
-	} else {
-		printk(KERN_INFO "[SWEEP2WAKE]: No valid input found. Sweep2Wake disabled. | s2w='%s'", s2w);
-		s2w_switch = 0;
-		s2w_temp = 0;
-	}
-	return 1;
-}
-__setup("s2w=", atmel_read_s2w_cmdline);
-
-static int __init atmel_read_s2w_start_cmdline(char *s2w_start)
-{
-	s2w_startbutton = sweep2wake_buttonset(s2w_start);
-	if (s2w_startbutton > 0) {
-		printk(KERN_INFO "[SWEEP2WAKE]: Sweep2Wake start button set to %s. | s2w_start='%s'", s2w_start, s2w_start);
-	} else {
-		printk(KERN_INFO "[SWEEP2WAKE]: No valid input found for start button. | s2w_start='%s'", s2w_start);
-	}
-	return 1;
-}
-__setup("s2w_start=", atmel_read_s2w_start_cmdline);
-
-static int __init atmel_read_s2w_end_cmdline(char *s2w_end)
-{
-	s2w_endbutton = sweep2wake_buttonset(s2w_end);
-	if (s2w_endbutton > 0) {
-		printk(KERN_INFO "[SWEEP2WAKE]: Sweep2Wake end button set to %s. | s2w_end='%s'", s2w_end, s2w_end);
-	} else {
-		printk(KERN_INFO "[SWEEP2WAKE]: No valid input found for end button. | s2w_end='%s'", s2w_end);
-	}
-	return 1;
-}
-__setup("s2w_end=", atmel_read_s2w_end_cmdline);
-#endif
-
 extern void sweep2wake_setdev(struct input_dev * input_device) {
 	sweep2wake_pwrdev = input_device;
 	return;
