@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2011, Code Aurora Forum. All rights reserved.
+/* Copyright (c) 2010-2012, Code Aurora Forum. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -968,26 +968,26 @@ static struct kgsl_device_platform_data kgsl_3d0_pdata = {
 		},
 		{
 			.gpu_freq = 300000000,
-			.bus_freq = 3,
+			.bus_freq = 4,
 			.io_fraction = 0,
 		},
 		{
 			.gpu_freq = 266667000,
-			.bus_freq = 2,
-			.io_fraction = 0,
+			.bus_freq = 4,
+			.io_fraction = 25,
 		},
 		{
 			.gpu_freq = 228571000,
-			.bus_freq = 1,
-			.io_fraction = 33,
+			.bus_freq = 3,
+			.io_fraction = 50,
 		},
 		{
 			.gpu_freq = 200000000,
-			.bus_freq = 0,
+			.bus_freq = 2,
+			.io_fraction = 100,
 		},
 	},
-	.init_level = 0,
-	.max_level = 2,
+	.init_level = 4,
 	.num_levels = 5,
 	.set_grp_async = NULL,
 	.idle_timeout = HZ/5,
@@ -1027,7 +1027,7 @@ static struct kgsl_device_platform_data kgsl_2d0_pdata = {
 	.pwrlevel = {
 		{
 			.gpu_freq = 266667000,
-			.bus_freq = 3,
+			.bus_freq = 2,
 		},
 		{
 			.gpu_freq = 228571000,
@@ -1035,18 +1035,21 @@ static struct kgsl_device_platform_data kgsl_2d0_pdata = {
 		},
 		{
 			.gpu_freq = 200000000,
-			.bus_freq = 1,
+			.bus_freq = 2,
 		},
 		{
-			.gpu_freq = 200000000,
-			.bus_freq = 0,
+			.gpu_freq = 160000000,
+			.bus_freq = 2,
+		},
+		{
+			.gpu_freq = 145455000,
+			.bus_freq = 1,
 		},
 	},
-	.init_level = 1,
-	.max_level = 1,
-	.num_levels = 4,
+	.init_level = 4,
+	.num_levels = 5,
 	.set_grp_async = NULL,
-	.idle_timeout = HZ/10,
+	.idle_timeout = HZ/5,
 	.nap_allowed = false,
 	.clk_map = KGSL_CLK_CORE | KGSL_CLK_IFACE,
 #ifdef CONFIG_MSM_BUS_SCALING
@@ -1083,7 +1086,7 @@ static struct kgsl_device_platform_data kgsl_2d1_pdata = {
 	.pwrlevel = {
 		{
 			.gpu_freq = 266667000,
-			.bus_freq = 3,
+			.bus_freq = 2,
 		},
 		{
 			.gpu_freq = 228571000,
@@ -1091,18 +1094,21 @@ static struct kgsl_device_platform_data kgsl_2d1_pdata = {
 		},
 		{
 			.gpu_freq = 200000000,
-			.bus_freq = 1,
+			.bus_freq = 2,
 		},
 		{
-			.gpu_freq = 200000000,
-			.bus_freq = 0,
+			.gpu_freq = 160000000,
+			.bus_freq = 2,
+		},
+		{
+			.gpu_freq = 145455000,
+			.bus_freq = 1,
 		},
 	},
-	.init_level = 1,
-	.max_level = 1,
-	.num_levels = 4,
+	.init_level = 4,
+	.num_levels = 5,
 	.set_grp_async = NULL,
-	.idle_timeout = HZ/10,
+	.idle_timeout = HZ/5,
 	.nap_allowed = false,
 	.clk_map = KGSL_CLK_CORE | KGSL_CLK_IFACE,
 #ifdef CONFIG_MSM_BUS_SCALING
@@ -1882,6 +1888,10 @@ static struct msm_rotator_platform_data rotator_pdata = {
 	.hardware_version_number = 0x01010307,
 	.rotator_clks = rotator_clocks,
 	.regulator_name = "fs_rot",
+#ifdef CONFIG_MSM_BUS_SCALING
+	.bus_scale_table = &rotator_bus_scale_pdata,
+#endif
+
 };
 
 struct platform_device msm_rotator_device = {
