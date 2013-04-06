@@ -968,26 +968,25 @@ static struct kgsl_device_platform_data kgsl_3d0_pdata = {
 		},
 		{
 			.gpu_freq = 300000000,
-			.bus_freq = 4,
+			.bus_freq = 3,
 			.io_fraction = 0,
 		},
 		{
 			.gpu_freq = 266667000,
-			.bus_freq = 4,
-			.io_fraction = 25,
+			.bus_freq = 2,
+			.io_fraction = 0,
 		},
 		{
 			.gpu_freq = 228571000,
-			.bus_freq = 3,
-			.io_fraction = 50,
+			.bus_freq = 1,
+			.io_fraction = 33,
 		},
 		{
 			.gpu_freq = 200000000,
-			.bus_freq = 2,
-			.io_fraction = 100,
+			.bus_freq = 0,
 		},
 	},
-	.init_level = 4,
+	.init_level = 0,
 	.num_levels = 5,
 	.set_grp_async = NULL,
 	.idle_timeout = HZ/5,
@@ -1027,11 +1026,11 @@ static struct kgsl_device_platform_data kgsl_2d0_pdata = {
 	.pwrlevel = {
 		{
 			.gpu_freq = 266667000,
-			.bus_freq = 2,
+			.bus_freq = 4,
 		},
 		{
 			.gpu_freq = 228571000,
-			.bus_freq = 2,
+			.bus_freq = 3,
 		},
 		{
 			.gpu_freq = 200000000,
@@ -1039,14 +1038,14 @@ static struct kgsl_device_platform_data kgsl_2d0_pdata = {
 		},
 		{
 			.gpu_freq = 160000000,
-			.bus_freq = 2,
+			.bus_freq = 1,
 		},
 		{
 			.gpu_freq = 145455000,
-			.bus_freq = 1,
+			.bus_freq = 0,
 		},
 	},
-	.init_level = 4,
+	.init_level = 2,
 	.num_levels = 5,
 	.set_grp_async = NULL,
 	.idle_timeout = HZ/5,
@@ -1086,11 +1085,11 @@ static struct kgsl_device_platform_data kgsl_2d1_pdata = {
 	.pwrlevel = {
 		{
 			.gpu_freq = 266667000,
-			.bus_freq = 2,
+			.bus_freq = 4,
 		},
 		{
 			.gpu_freq = 228571000,
-			.bus_freq = 2,
+			.bus_freq = 3,
 		},
 		{
 			.gpu_freq = 200000000,
@@ -1098,14 +1097,14 @@ static struct kgsl_device_platform_data kgsl_2d1_pdata = {
 		},
 		{
 			.gpu_freq = 160000000,
-			.bus_freq = 2,
+			.bus_freq = 1,
 		},
 		{
 			.gpu_freq = 145455000,
-			.bus_freq = 1,
+			.bus_freq = 0,
 		},
 	},
-	.init_level = 4,
+	.init_level = 2,
 	.num_levels = 5,
 	.set_grp_async = NULL,
 	.idle_timeout = HZ/5,
@@ -1888,7 +1887,6 @@ static struct msm_rotator_platform_data rotator_pdata = {
 	.hardware_version_number = 0x01010307,
 	.rotator_clks = rotator_clocks,
 	.regulator_name = "fs_rot",
-
 };
 
 struct platform_device msm_rotator_device = {
