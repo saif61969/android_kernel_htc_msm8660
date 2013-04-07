@@ -482,9 +482,7 @@ struct ddl_client_context *ddl_get_current_ddl_client_for_command(
 
 u32 ddl_get_yuv_buf_size(u32 width, u32 height, u32 format)
 {
-	/* HTC_START (klockwork issue)*/
-	u32 mem_size, width_round_up, height_round_up, align = 0;
-	/* HTC_END */
+	u32 mem_size, width_round_up, height_round_up, align;
 
 	width_round_up  = width;
 	height_round_up = height;
@@ -921,6 +919,7 @@ u32 ddl_allocate_enc_hw_buffers(struct ddl_client_context *ddl)
 				status = VCD_ERR_ALLOC_FAIL;
 		}
 		if (buf_size.sz_col_zero > 0) {
+			enc_bufs->col_zero.mem_type = DDL_MM_MEM;
 #ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 			enc_bufs->col_zero.mem_type = DDL_CMD_MEM;
 #endif
@@ -930,6 +929,7 @@ u32 ddl_allocate_enc_hw_buffers(struct ddl_client_context *ddl)
 			status = VCD_ERR_ALLOC_FAIL;
 		}
 		if (buf_size.sz_md > 0) {
+			enc_bufs->md.mem_type = DDL_MM_MEM;
 #ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 			enc_bufs->md.mem_type = DDL_CMD_MEM;
 #endif
@@ -939,6 +939,7 @@ u32 ddl_allocate_enc_hw_buffers(struct ddl_client_context *ddl)
 				status = VCD_ERR_ALLOC_FAIL;
 		}
 		if (buf_size.sz_pred > 0) {
+			enc_bufs->pred.mem_type = DDL_MM_MEM;
 #ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 			enc_bufs->pred.mem_type = DDL_CMD_MEM;
 #endif
@@ -948,6 +949,7 @@ u32 ddl_allocate_enc_hw_buffers(struct ddl_client_context *ddl)
 				status = VCD_ERR_ALLOC_FAIL;
 		}
 		if (buf_size.sz_nbor_info > 0) {
+			enc_bufs->nbor_info.mem_type = DDL_MM_MEM;
 #ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 			enc_bufs->nbor_info.mem_type = DDL_CMD_MEM;
 #endif
@@ -957,6 +959,7 @@ u32 ddl_allocate_enc_hw_buffers(struct ddl_client_context *ddl)
 				status = VCD_ERR_ALLOC_FAIL;
 		}
 		if (buf_size.sz_acdc_coef > 0) {
+			enc_bufs->acdc_coef.mem_type = DDL_MM_MEM;
 #ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 			enc_bufs->acdc_coef.mem_type = DDL_CMD_MEM;
 #endif
@@ -966,6 +969,7 @@ u32 ddl_allocate_enc_hw_buffers(struct ddl_client_context *ddl)
 				status = VCD_ERR_ALLOC_FAIL;
 		}
 		if (buf_size.sz_mb_info > 0) {
+			enc_bufs->mb_info.mem_type = DDL_MM_MEM;
 #ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 			enc_bufs->mb_info.mem_type = DDL_CMD_MEM;
 #endif
@@ -975,6 +979,7 @@ u32 ddl_allocate_enc_hw_buffers(struct ddl_client_context *ddl)
 				status = VCD_ERR_ALLOC_FAIL;
 		}
 		if (buf_size.sz_context > 0) {
+			enc_bufs->context.mem_type = DDL_MM_MEM;
 #ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 			enc_bufs->context.mem_type = DDL_CMD_MEM;
 #endif

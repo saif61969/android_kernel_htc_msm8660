@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2012, Code Aurora Forum. All rights reserved.
+/* Copyright (c) 2010-2012, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -61,16 +61,13 @@ static void *res_trk_pmem_map
 	u32 index = 0;
 	struct ddl_context *ddl_context;
 	struct msm_mapped_buffer *mapped_buffer = NULL;
-#if 0
 	int ret = 0;
 	unsigned long iova = 0;
 	unsigned long buffer_size  = 0;
 	unsigned long *kernel_vaddr = NULL;
-#endif
 
 	ddl_context = ddl_get_context();
 	if (res_trk_get_enable_ion() && addr->alloc_handle) {
-#if 0
 		kernel_vaddr = (unsigned long *) ion_map_kernel(
 					ddl_context->video_ion_client,
 					addr->alloc_handle, UNCACHED);
@@ -102,7 +99,6 @@ static void *res_trk_pmem_map
 				addr->physical_base_addr);
 		addr->align_virtual_addr = addr->virtual_base_addr + offset;
 		addr->buffer_size = buffer_size;
-#endif
 	} else {
 		if (!res_trk_check_for_sec_session()) {
 			if (!addr->alloced_phys_addr) {
@@ -150,7 +146,6 @@ bail_out:
 	if (addr->mapped_buffer)
 		msm_subsystem_unmap_buffer(addr->mapped_buffer);
 	return NULL;
-#if 0
 ion_unmap_bail_out:
 	if (!IS_ERR_OR_NULL(addr->alloc_handle)) {
 		ion_unmap_kernel(resource_context.
@@ -158,7 +153,6 @@ ion_unmap_bail_out:
 	}
 ion_bail_out:
 	return NULL;
-#endif
 }
 
 static void res_trk_pmem_free(struct ddl_buf_addr *addr)
@@ -502,7 +496,7 @@ u32 res_trk_power_down(void)
 {
 	VCDRES_MSG_LOW("clk_regime_rail_disable");
 	res_trk_pmem_unmap(&resource_context.firmware_addr);
-//	res_trk_pmem_free(&resource_context.firmware_addr);
+	res_trk_pmem_free(&resource_context.firmware_addr);
 #ifdef CONFIG_MSM_BUS_SCALING
 	msm_bus_scale_client_update_request(resource_context.pcl, 0);
 	msm_bus_scale_unregister_client(resource_context.pcl);
@@ -758,7 +752,6 @@ u32 res_trk_get_core_type(void){
 }
 
 static int fw_allocated = 0;
-
 u32 res_trk_get_firmware_addr(struct ddl_buf_addr *firm_addr)
 {
 	int rc = 0;
@@ -805,7 +798,7 @@ fail_alloc:
 void res_trk_release_fw_addr(void)
 {
 	res_trk_pmem_unmap(&resource_context.firmware_addr);
-	//res_trk_pmem_free(&resource_context.firmware_addr);
+	res_trk_pmem_free(&resource_context.firmware_addr);
 }
 
 int res_trk_check_for_sec_session(void)
@@ -858,12 +851,9 @@ int res_trk_get_mem_type(void){
 
 u32 res_trk_is_cp_enabled(void)
 {
-#if 0
-// disabled in msm.git for 8x60
 	if (resource_context.vidc_platform_data->cp_enabled)
 		return 1;
 	else
-#endif
 		return 0;
 }
 
