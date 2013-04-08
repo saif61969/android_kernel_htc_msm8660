@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2012, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2010-2012, Code Aurora Forum. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -36,12 +36,14 @@ static int vcd_pmem_alloc(size_t sz, u8 **kernel_vaddr, u8 **phy_addr,
 	u32 memtype, i = 0, flags = 0;
 	struct vcd_msm_map_buffer *map_buffer = NULL;
 	struct msm_mapped_buffer *mapped_buffer = NULL;
+#if 0
 	unsigned long iova = 0;
 	unsigned long buffer_size = 0;
 	int ret = 0;
 	unsigned long ionflag = 0;
 	ion_phys_addr_t phyaddr = 0;
 	size_t len = 0;
+#endif
 
 	if (!kernel_vaddr || !phy_addr || !cctxt) {
 		pr_err("\n%s: Invalid parameters", __func__);
@@ -89,6 +91,8 @@ static int vcd_pmem_alloc(size_t sz, u8 **kernel_vaddr, u8 **phy_addr,
 			"sz(%u), flags(0x%x)", (u32)*phy_addr,
 			(u32)*kernel_vaddr, sz, (u32)flags);
 	} else {
+#if 0
+// don't use ION
 		map_buffer->alloc_handle = ion_alloc(
 			    cctxt->vcd_ion_client, sz, SZ_4K,
 			    memtype);
@@ -146,6 +150,7 @@ static int vcd_pmem_alloc(size_t sz, u8 **kernel_vaddr, u8 **phy_addr,
 		VCD_MSG_LOW("vcd_ion_alloc: phys(0x%x), virt(0x%x), "\
 			"sz(%u), ionflags(0x%x)", (u32)*phy_addr,
 			(u32)*kernel_vaddr, sz, (u32)ionflag);
+#endif
 	}
 
 	return 0;
@@ -159,10 +164,12 @@ free_acm_alloc:
 		(unsigned long)map_buffer->phy_addr);
 	}
 	return -ENOMEM;
+#if 0
 ion_map_bailout:
 	ion_unmap_kernel(cctxt->vcd_ion_client, map_buffer->alloc_handle);
 ion_free_bailout:
 	ion_free(cctxt->vcd_ion_client, map_buffer->alloc_handle);
+#endif
 free_map_table:
 	map_buffer->in_use = 0;
 bailout:
@@ -782,11 +789,7 @@ u32 vcd_free_one_buffer_internal(
 		buf_pool->allocated--;
 	}
 
-	buf_entry->valid = buf_entry->allocated = buf_entry->in_use = 0;
-	buf_entry->alloc = buf_entry->virtual = buf_entry->physical = NULL;
-	buf_entry->sz = 0;
-	memset(&buf_entry->frame, 0, sizeof(struct vcd_frame_data));
-
+	memset(buf_entry, 0, sizeof(struct vcd_buffer_entry));
 	buf_pool->validated--;
 	if (buf_pool->validated == 0)
 		vcd_free_buffer_pool_entries(buf_pool);

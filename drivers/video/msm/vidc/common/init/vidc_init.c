@@ -1,4 +1,4 @@
-/* Copyright (c) 2010-2012, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2010-2012, Code Aurora Forum. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -567,10 +567,12 @@ u32 vidc_insert_addr_table(struct video_client_ctx *client_ctx,
 	struct msm_mapped_buffer *mapped_buffer = NULL;
 	struct ion_handle *buff_ion_handle = NULL;
 	unsigned long ionflag = 0;
+#if 0
 	unsigned long iova = 0;
 	int ret = 0;
 	unsigned long buffer_size  = 0;
 	size_t ion_len;
+#endif
 
 	if (!client_ctx || !length)
 		return false;
@@ -627,6 +629,8 @@ u32 vidc_insert_addr_table(struct video_client_ctx *client_ctx,
 			buf_addr_table[*num_of_buffers].dev_addr =
 				mapped_buffer->iova[0];
 		} else {
+#if 0
+// we dont need ION
 			buff_ion_handle = ion_import_fd(
 				client_ctx->user_ion_client, pmem_fd);
 			if (IS_ERR_OR_NULL(buff_ion_handle)) {
@@ -688,6 +692,7 @@ u32 vidc_insert_addr_table(struct video_client_ctx *client_ctx,
 				buf_addr_table[*num_of_buffers].dev_addr =
 						 iova;
 			}
+#endif
 		}
 		phys_addr += buffer_addr_offset;
 		(*kernel_vaddr) += buffer_addr_offset;
@@ -708,12 +713,14 @@ u32 vidc_insert_addr_table(struct video_client_ctx *client_ctx,
 	}
 	mutex_unlock(&client_ctx->enrty_queue_lock);
 	return true;
+#if 0
 ion_map_error:
 	if (*kernel_vaddr && buff_ion_handle)
 		ion_unmap_kernel(client_ctx->user_ion_client, buff_ion_handle);
 ion_free_error:
 	if (!IS_ERR_OR_NULL(buff_ion_handle))
 		ion_free(client_ctx->user_ion_client, buff_ion_handle);
+#endif
 bail_out_add:
 	mutex_unlock(&client_ctx->enrty_queue_lock);
 	return false;
