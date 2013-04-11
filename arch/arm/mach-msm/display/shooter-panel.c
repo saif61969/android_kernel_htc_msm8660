@@ -29,6 +29,7 @@
 #include <mach/msm_iomap.h>
 #include <mach/panel_id.h>
 #include <mach/msm_bus_board.h>
+#include <mach/msm_memtypes.h>
 #include <linux/mfd/pmic8058.h>
 #include <linux/leds.h>
 #include <mach/debug_display.h>
@@ -487,6 +488,8 @@ static int msm_fb_detect_panel(const char *name)
 
 static struct msm_fb_platform_data msm_fb_pdata = {
 	.detect_client = msm_fb_detect_panel,
+	.prim_panel_name = "mipi_cmd_novatek_qhd",
+	.ext_panel_name = "mipi_cmd_orise_qhd",
 	.blt_mode = 1,
 	.width = 53,
 	.height = 95,
@@ -1073,8 +1076,15 @@ static struct msm_panel_common_pdata mdp_pdata = {
 	.mdp_core_clk_rate = 200000000,
 	.mdp_core_clk_table = mdp_core_clk_rate_table,
 	.num_mdp_clk = ARRAY_SIZE(mdp_core_clk_rate_table),
+	.mdp_max_clk = 200000000,
 #ifdef CONFIG_MSM_BUS_SCALING
 	.mdp_bus_scale_table = &mdp_bus_scale_pdata,
+#endif
+	.mdp_rev = MDP_REV_41,
+#ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
+	.mem_hid = BIT(ION_CP_WB_HEAP_ID),
+#else
+	.mem_hid = MEMTYPE_EBI0,
 #endif
 	.mdp_color_enhance = shooter_mdp_color_enhance,
 	.mdp_gamma = shooter_mdp_gamma,
@@ -1111,6 +1121,9 @@ int __init shooter_init_panel(struct resource *res, size_t size)
 
 	msm_fb_device.resource = res;
 	msm_fb_device.num_resources = size;
+
+	mdp_pdata.ov0_wb_size = MSM_FB_OVERLAY0_WRITEBACK_SIZE;
+	mdp_pdata.ov1_wb_size = MSM_FB_OVERLAY1_WRITEBACK_SIZE;
 
 	ret = platform_device_register(&msm_fb_device);
 	ret = platform_device_register(&mipi_dsi_cmd_sharp_qhd_panel_device);
