@@ -1154,18 +1154,13 @@ struct mdp_reg pyd_sharp_gamma[] = {
 
 int pyd_mdp_color_enhance(void)
 {
-	mdp_color_enhancement(pyd_color_v11, ARRAY_SIZE(pyd_color_v11));
+	//mdp_color_enhancement(pyd_color_v11, ARRAY_SIZE(pyd_color_v11));
 
 	return 0;
 }
 
 int pyd_mdp_gamma(void)
 {
-	if (panel_type == PANEL_ID_PYD_SHARP)
-		mdp_color_enhancement(pyd_sharp_gamma, ARRAY_SIZE(pyd_sharp_gamma));
-	else
-		mdp_color_enhancement(pyd_auo_gamma, ARRAY_SIZE(pyd_auo_gamma));
-
 	return 0;
 }
 
@@ -1249,11 +1244,11 @@ int __init pyd_init_panel(struct resource *res, size_t size)
         mdp_pdata.ov1_wb_size = MSM_FB_OVERLAY1_WRITEBACK_SIZE;
 
 
-#if 1
-	/* Cancel the fixup temporally due to it's cause flicking problem. */
+/* #if 1
+	 Cancel the fixup temporally due to it's cause flicking problem. 
 	if (panel_type == PANEL_ID_PYD_AUO_NT)
 		mipi_pdata.esd_fixup = pyd_esd_fixup;
-#endif
+#endif */
 
 	ret = platform_device_register(&msm_fb_device);
 	ret = platform_device_register(&lcdc_samsung_panel_device);
