@@ -42,17 +42,15 @@ void *ddl_pmem_alloc(struct ddl_buf_addr *addr, size_t sz, u32 alignment)
 	u32 index = 0;
 	struct ddl_context *ddl_context;
 	struct msm_mapped_buffer *mapped_buffer = NULL;
-	unsigned long flags = 0;
-#if 0
+	unsigned long iova = 0;
 	unsigned long buffer_size = 0;
 	unsigned long *kernel_vaddr = NULL;
-	unsigned long iova = 0;
 	unsigned long ionflag = 0;
+	unsigned long flags = 0;
 	int ret = 0;
 	ion_phys_addr_t phyaddr = 0;
 	size_t len = 0;
 	int rc = 0;
-#endif
 	DBG_PMEM("\n%s() IN: Requested alloc size(%u)", __func__, (u32)sz);
 	if (!addr) {
 		DDL_MSG_ERROR("\n%s() Invalid Parameters", __func__);
@@ -62,7 +60,6 @@ void *ddl_pmem_alloc(struct ddl_buf_addr *addr, size_t sz, u32 alignment)
 	res_trk_set_mem_type(addr->mem_type);
 	alloc_size = (sz + alignment);
 	if (res_trk_get_enable_ion()) {
-#if 0
 		if (!ddl_context->video_ion_client)
 			ddl_context->video_ion_client =
 				res_trk_get_ion_client();
@@ -136,7 +133,6 @@ void *ddl_pmem_alloc(struct ddl_buf_addr *addr, size_t sz, u32 alignment)
 				addr->physical_base_addr);
 		addr->align_virtual_addr = addr->virtual_base_addr + offset;
 		addr->buffer_size = alloc_size;
-#endif
 	} else {
 		addr->alloced_phys_addr = (phys_addr_t)
 		allocate_contiguous_memory_nomap(alloc_size,
@@ -183,7 +179,6 @@ free_acm_alloc:
 			(unsigned long)addr->alloced_phys_addr);
 		addr->alloced_phys_addr = (phys_addr_t)NULL;
 		return NULL;
-#if 0
 unmap_ion_alloc:
 	ion_unmap_kernel(ddl_context->video_ion_client,
 		addr->alloc_handle);
@@ -193,7 +188,6 @@ free_ion_alloc:
 	ion_free(ddl_context->video_ion_client,
 		addr->alloc_handle);
 	addr->alloc_handle = NULL;
-#endif
 bail_out:
 	return NULL;
 }

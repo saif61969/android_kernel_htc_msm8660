@@ -31,6 +31,7 @@
 #include <media/msm/vidc_type.h>
 #include <media/msm/vcd_api.h>
 #include <media/msm/vidc_init.h>
+#include "vcd_res_tracker_api.h"
 #include "venc_internal.h"
 
 #if DEBUG
@@ -1655,10 +1656,8 @@ u32 vid_enc_encode_frame(struct video_client_ctx *client_ctx,
 	int pmem_fd;
 	struct file *file;
 	s32 buffer_index = -1;
-#ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 	u32 ion_flag = 0;
 	struct ion_handle *buff_handle = NULL;
-#endif
 
 	u32 vcd_status = VCD_ERR_FAIL;
 
@@ -1690,7 +1689,6 @@ u32 vid_enc_encode_frame(struct video_client_ctx *client_ctx,
 		/* Rely on VCD using the same flags as OMX */
 		vcd_input_buffer.flags = input_frame_info->flags;
 
-#ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 		ion_flag = vidc_get_fd_info(client_ctx, BUFFER_TYPE_INPUT,
 				pmem_fd, kernel_vaddr, buffer_index,
 				&buff_handle);
@@ -1705,7 +1703,6 @@ u32 vid_enc_encode_frame(struct video_client_ctx *client_ctx,
 				ION_IOC_CLEAN_CACHES);
 			}
 		}
-#endif
 
 		vcd_status = vcd_encode_frame(client_ctx->vcd_handle,
 		&vcd_input_buffer);
@@ -1774,14 +1771,13 @@ u32 vid_enc_set_recon_buffers(struct video_client_ctx *client_ctx,
 	struct vcd_property_hdr vcd_property_hdr;
 	struct vcd_property_enc_recon_buffer *control = NULL;
 	struct msm_mapped_buffer *mapped_buffer = NULL;
-#ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 	int rc = -1;
 	unsigned long ionflag = 0;
 	unsigned long iova = 0;
 	unsigned long buffer_size = 0;
 	size_t ion_len = -1;
 	unsigned long phy_addr;
-#endif
+
 	if (!client_ctx || !venc_recon) {
 		pr_err("%s() Invalid params", __func__);
 		return false;
@@ -1826,7 +1822,6 @@ u32 vid_enc_set_recon_buffers(struct video_client_ctx *client_ctx,
 			control->client_data = (void *) mapped_buffer;
 			control->dev_addr = (u8 *)mapped_buffer->iova[0];
 	} else {
-#ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 		client_ctx->recon_buffer_ion_handle[i] = ion_import_fd(
 				client_ctx->user_ion_client, control->pmem_fd);
 		if (IS_ERR_OR_NULL(client_ctx->recon_buffer_ion_handle[i])) {
@@ -1884,7 +1879,6 @@ u32 vid_enc_set_recon_buffers(struct video_client_ctx *client_ctx,
 			control->client_data = NULL;
 			control->dev_addr = (u8 *)iova;
 		}
-#endif
 	}
 
 	vcd_property_hdr.prop_id = VCD_I_RECON_BUFFERS;
@@ -1901,7 +1895,6 @@ u32 vid_enc_set_recon_buffers(struct video_client_ctx *client_ctx,
 				__func__, vcd_status);
 		return false;
 	}
-#ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 map_ion_error:
 	if (control->kernel_virtual_addr)
 		ion_unmap_kernel(client_ctx->user_ion_client,
@@ -1911,7 +1904,6 @@ map_ion_error:
 			client_ctx->recon_buffer_ion_handle[i]);
 		client_ctx->recon_buffer_ion_handle[i] = NULL;
 import_ion_error:
-#endif
 	return false;
 }
 
@@ -1955,7 +1947,6 @@ u32 vid_enc_free_recon_buffers(struct video_client_ctx *client_ctx,
 		if (client_ctx->recon_buffer_ion_handle[i]) {
 			ion_unmap_kernel(client_ctx->user_ion_client,
 				client_ctx->recon_buffer_ion_handle[i]);
-#ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
 			if (!res_trk_check_for_sec_session() &&
 			   (res_trk_get_core_type() != (u32)VCD_CORE_720P)) {
 				ion_unmap_iommu(client_ctx->user_ion_client,
@@ -1963,7 +1954,6 @@ u32 vid_enc_free_recon_buffers(struct video_client_ctx *client_ctx,
 				VIDEO_DOMAIN,
 				VIDEO_MAIN_POOL);
 			}
-#endif
 			ion_free(client_ctx->user_ion_client,
 				client_ctx->recon_buffer_ion_handle[i]);
 			client_ctx->recon_buffer_ion_handle[i] = NULL;

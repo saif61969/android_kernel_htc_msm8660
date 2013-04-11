@@ -61,16 +61,13 @@ static void *res_trk_pmem_map
 	u32 index = 0;
 	struct ddl_context *ddl_context;
 	struct msm_mapped_buffer *mapped_buffer = NULL;
-#if 0
 	int ret = 0;
 	unsigned long iova = 0;
 	unsigned long buffer_size  = 0;
 	unsigned long *kernel_vaddr = NULL;
-#endif
 
 	ddl_context = ddl_get_context();
 	if (res_trk_get_enable_ion() && addr->alloc_handle) {
-#if 0
 		kernel_vaddr = (unsigned long *) ion_map_kernel(
 					ddl_context->video_ion_client,
 					addr->alloc_handle, UNCACHED);
@@ -102,7 +99,6 @@ static void *res_trk_pmem_map
 				addr->physical_base_addr);
 		addr->align_virtual_addr = addr->virtual_base_addr + offset;
 		addr->buffer_size = buffer_size;
-#endif
 	} else {
 		if (!res_trk_check_for_sec_session()) {
 			if (!addr->alloced_phys_addr) {
@@ -150,7 +146,6 @@ bail_out:
 	if (addr->mapped_buffer)
 		msm_subsystem_unmap_buffer(addr->mapped_buffer);
 	return NULL;
-#if 0
 ion_unmap_bail_out:
 	if (!IS_ERR_OR_NULL(addr->alloc_handle)) {
 		ion_unmap_kernel(resource_context.
@@ -158,7 +153,6 @@ ion_unmap_bail_out:
 	}
 ion_bail_out:
 	return NULL;
-#endif
 }
 
 static void res_trk_pmem_free(struct ddl_buf_addr *addr)
@@ -502,7 +496,7 @@ u32 res_trk_power_down(void)
 {
 	VCDRES_MSG_LOW("clk_regime_rail_disable");
 	res_trk_pmem_unmap(&resource_context.firmware_addr);
-//	res_trk_pmem_free(&resource_context.firmware_addr);
+	res_trk_pmem_free(&resource_context.firmware_addr);
 #ifdef CONFIG_MSM_BUS_SCALING
 	msm_bus_scale_client_update_request(resource_context.pcl, 0);
 	msm_bus_scale_unregister_client(resource_context.pcl);
@@ -531,9 +525,8 @@ int res_trk_update_bus_perf_level(struct vcd_dev_ctxt *dev_ctxt, u32 perf_level)
 	u32 bus_clk_index, client_type = 0;
 	int rc = 0;
 	bool turbo_enabled = false;
-	bool turbo_supported = false;
-// disabled in msm.git jb_chocolate for 8x60
-//		!resource_context.vidc_platform_data->disable_turbo;
+	bool turbo_supported =
+		!resource_context.vidc_platform_data->disable_turbo;
 
 	cctxt_itr = dev_ctxt->cctxt_list_head;
 	while (cctxt_itr) {
@@ -586,9 +579,8 @@ u32 res_trk_set_perf_level(u32 req_perf_lvl, u32 *pn_set_perf_lvl,
 	struct vcd_dev_ctxt *dev_ctxt)
 {
 	u32 vidc_freq = 0;
-	bool turbo_supported = false;
-// disabled for msm8x60 in msm.git jb_chocolate
-//		!resource_context.vidc_platform_data->disable_turbo;
+	bool turbo_supported =
+		!resource_context.vidc_platform_data->disable_turbo;
 
 	if (!pn_set_perf_lvl || !dev_ctxt) {
 		VCDRES_MSG_ERROR("%s(): NULL pointer! dev_ctxt(%p)\n",
@@ -757,8 +749,6 @@ u32 res_trk_get_core_type(void){
 	return resource_context.core_type;
 }
 
-static int fw_allocated = 0;
-
 u32 res_trk_get_firmware_addr(struct ddl_buf_addr *firm_addr)
 {
 	int rc = 0;
@@ -772,18 +762,14 @@ u32 res_trk_get_firmware_addr(struct ddl_buf_addr *firm_addr)
 	else
 		size = VIDC_FW_SIZE;
 
-	if (!fw_allocated)
-	{
-		fw_allocated = 1;
-		if (res_trk_pmem_alloc(&resource_context.firmware_addr,
-					size, DDL_KILO_BYTE(128))) {
-			pr_err("%s() Firmware buffer allocation failed",
-					__func__);
-			memset(&resource_context.firmware_addr, 0,
-					sizeof(resource_context.firmware_addr));
-			rc = -ENOMEM;
-			goto fail_alloc;
-		}
+	if (res_trk_pmem_alloc(&resource_context.firmware_addr,
+				size, DDL_KILO_BYTE(128))) {
+		pr_err("%s() Firmware buffer allocation failed",
+				__func__);
+		memset(&resource_context.firmware_addr, 0,
+				sizeof(resource_context.firmware_addr));
+		rc = -ENOMEM;
+		goto fail_alloc;
 	}
 	if (!res_trk_pmem_map(&resource_context.firmware_addr,
 		resource_context.firmware_addr.buffer_size,
@@ -805,7 +791,7 @@ fail_alloc:
 void res_trk_release_fw_addr(void)
 {
 	res_trk_pmem_unmap(&resource_context.firmware_addr);
-	//res_trk_pmem_free(&resource_context.firmware_addr);
+	res_trk_pmem_free(&resource_context.firmware_addr);
 }
 
 int res_trk_check_for_sec_session(void)
@@ -816,7 +802,7 @@ int res_trk_check_for_sec_session(void)
 	mutex_unlock(&resource_context.secure_lock);
 	return rc;
 }
-#ifdef CONFIG_MSM_MULTIMEDIA_USE_ION
+
 int res_trk_get_mem_type(void)
 {
 	int mem_type = -1;
@@ -850,20 +836,12 @@ int res_trk_get_mem_type(void)
 	}
 	return mem_type;
 }
-#else
-int res_trk_get_mem_type(void){
-	return resource_context.memtype;
-}
-#endif
 
 u32 res_trk_is_cp_enabled(void)
 {
-#if 0
-// disabled in msm.git for 8x60
 	if (resource_context.vidc_platform_data->cp_enabled)
 		return 1;
 	else
-#endif
 		return 0;
 }
 
