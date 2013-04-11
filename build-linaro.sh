@@ -15,7 +15,7 @@ export ARCH=arm
 export CROSS_COMPILE=$HOME/android/system/prebuilt/linux-x86/toolchain/linaro/bin/arm-cortex_a8-linux-gnueabi-
 
 ## Build kernel using pyramid_defconfig
-make mrproper
+#make mrproper
 make pyramid_defconfig
 make -j$MAKE ARCH=arm
 sleep 1

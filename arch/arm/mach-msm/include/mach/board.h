@@ -527,7 +527,7 @@ enum mipi_dsi_3d_ctrl {
 	FPGA_SPI_INTF,
 };
 
-#if defined(CONFIG_FB_MSM8960) || !defined(CONFIG_ARCH_MSM7X27A))
+#if defined(CONFIG_FB_MSM8960) || (!defined(CONFIG_ARCH_MSM7X27A))
 /* DSI PHY configuration */
 struct mipi_dsi_phy_ctrl {
 	uint32_t regulator[5];
