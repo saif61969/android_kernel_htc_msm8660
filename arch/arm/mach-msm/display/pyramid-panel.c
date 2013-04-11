@@ -40,7 +40,7 @@
 #include <linux/fb.h>
 #endif
 
-void mdp_color_enhancement(const struct mdp_reg *reg_seq, int size);
+//void mdp_color_enhancement(const struct mdp_reg *reg_seq, int size);
 
 static struct regulator *l1_3v;
 static struct regulator *lvs1_1v8;
