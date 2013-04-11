@@ -470,19 +470,7 @@ static struct lcdc_platform_data lcdc_pdata = {
 /* The solution provide by Novatek to fixup the problem of blank screen while
  * performing static electric strick. Only AUO panel need this function.
  */
-int pyd_esd_fixup(uint32_t mfd_data)
-{
-	/* do two read_scan_line consecutively to avoid flicking */
-	if (mipi_novatek_read_scan_line() == 0xf7ff) {
-		hr_msleep(1);
-		if (mipi_novatek_read_scan_line() == 0xf7ff) {
-			pr_info("%s\n", __func__);
-			mipi_novatek_restart_vcounter();
-		}
-	}
 
-	return 0;
-}
 
 static struct mipi_dsi_platform_data mipi_pdata = {
 	.vsync_gpio		= 28,
