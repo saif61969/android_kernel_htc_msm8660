@@ -3201,11 +3201,11 @@ static void mhl_sii9234_1v2_power(bool enable)
 
 	if (enable) {
 		config_gpio_table(msm_hdmi_on_gpio, ARRAY_SIZE(msm_hdmi_on_gpio));
-		hdmi_hpd_feature(1);
+		//hdmi_hpd_feature(1);
 		pr_info("%s(on): success\n", __func__);
 	} else {
 		config_gpio_table(msm_hdmi_off_gpio, ARRAY_SIZE(msm_hdmi_off_gpio));
-		hdmi_hpd_feature(0);
+		//hdmi_hpd_feature(0);
 		pr_info("%s(off): success\n", __func__);
 	}
 
