@@ -51,7 +51,7 @@ static struct pwm_device *pwm_3d = NULL;
 struct kobject *kobj, *uevent_kobj;
 struct kset *uevent_kset;
 
-void mdp4_dsi_color_enhancement(const struct mdp_reg *reg_seq, int size);
+/*void mdp4_dsi_color_enhancement(const struct mdp_reg *reg_seq, int size);*/
 static struct pm_gpio pwm_gpio_config = {
 		.direction	= PM_GPIO_DIR_OUT,
 		.output_value	= 0,
@@ -1066,7 +1066,7 @@ int shooter_mdp_color_enhance(void)
 int shooter_mdp_gamma(void)
 {
 	PR_DISP_INFO("%s\n", __func__);
-	mdp4_dsi_color_enhancement(mdp_sharp_barrier_off, ARRAY_SIZE(mdp_sharp_barrier_off));
+	/*mdp4_dsi_color_enhancement(mdp_sharp_barrier_off, ARRAY_SIZE(mdp_sharp_barrier_off));*/
 
 	return 0;
 }
@@ -1086,8 +1086,8 @@ static struct msm_panel_common_pdata mdp_pdata = {
 #else
 	.mem_hid = MEMTYPE_EBI0,
 #endif
-	.mdp_color_enhance = shooter_mdp_color_enhance,
-	.mdp_gamma = shooter_mdp_gamma,
+	/*.mdp_color_enhance = shooter_mdp_color_enhance,
+	.mdp_gamma = shooter_mdp_gamma,*/
 };
 
 static void __init msm_fb_add_devices(void)
@@ -1161,13 +1161,13 @@ static void shooter_3Dpanel_on(bool bLandscape)
 	pwm_enable(pwm_3d);
 
 	if (bLandscape) {
-		mdp4_dsi_color_enhancement(mdp_sharp_barrier_on, ARRAY_SIZE(mdp_sharp_barrier_on));
+		/*mdp4_dsi_color_enhancement(mdp_sharp_barrier_on, ARRAY_SIZE(mdp_sharp_barrier_on));*/
 		gpio_set_value(SHOOTER_CTL_3D_1, 1);
 		gpio_set_value(SHOOTER_CTL_3D_2, 1);
 		gpio_set_value(SHOOTER_CTL_3D_3, 1);
 		gpio_set_value(SHOOTER_CTL_3D_4, 0);
 	} else {
-		mdp4_dsi_color_enhancement(mdp_sharp_barrier_on, ARRAY_SIZE(mdp_sharp_barrier_on));
+		/*mdp4_dsi_color_enhancement(mdp_sharp_barrier_on, ARRAY_SIZE(mdp_sharp_barrier_on));*/
 		gpio_set_value(SHOOTER_CTL_3D_1, 1);
 		gpio_set_value(SHOOTER_CTL_3D_2, 1);
 		gpio_set_value(SHOOTER_CTL_3D_3, 0);
@@ -1184,7 +1184,7 @@ static void shooter_3Dpanel_off(void)
 		if (rc < 0)
 			pr_err("%s pmic gpio config gpio %d failed\n", __func__, SHOOTER_3DLCM_PD);
 	}
-	mdp4_dsi_color_enhancement(mdp_sharp_barrier_off, ARRAY_SIZE(mdp_sharp_barrier_off));
+	/*mdp4_dsi_color_enhancement(mdp_sharp_barrier_off, ARRAY_SIZE(mdp_sharp_barrier_off));*/
 	pwm_disable(pwm_3d);
 
 	rc = pm8xxx_gpio_config(PM8058_GPIO_PM_TO_SYS(SHOOTER_3DCLK), &clk_gpio_config_off);

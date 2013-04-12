@@ -3326,7 +3326,7 @@ static struct platform_device ram_console_device = {
 	.resource	= ram_console_resources,
 };
 
-#ifdef CONFIG_FB_MSM_HDMI_MHL
+#ifdef CONFIG_FB_MSM_HDMI_MHL_SII9234
 static void mhl_sii9234_1v2_power(bool enable);
 #endif
 
@@ -3397,7 +3397,7 @@ static void shooter_usb_dpdn_switch(int path)
 	}
 	}
 
-	#ifdef CONFIG_FB_MSM_HDMI_MHL
+	#ifdef CONFIG_FB_MSM_HDMI_MHL_SII9234
 	sii9234_change_usb_owner((path == PATH_MHL)?1:0);
 	#endif
 }
@@ -3415,7 +3415,7 @@ static struct cable_detect_platform_data cable_detect_pdata = {
 		.usbid_amux	= PM_MPP_AIN_AMUX_CH5,
 	},
 	.config_usb_id_gpios = config_shooter_usb_id_gpios,
-#ifdef CONFIG_FB_MSM_HDMI_MHL
+#ifdef CONFIG_FB_MSM_HDMI_MHL_SII9234
 	.mhl_1v2_power = mhl_sii9234_1v2_power,
 #endif
 };
@@ -3485,7 +3485,7 @@ static struct platform_device pm8058_leds = {
 	},
 };
 
-#ifdef CONFIG_FB_MSM_HDMI_MHL
+#ifdef CONFIG_FB_MSM_HDMI_MHL_SII9234
 static int pm8901_mpp_init(void);
 static struct regulator *reg_8901_l0;
 static struct regulator *reg_8058_l19;
@@ -3630,7 +3630,7 @@ static T_MHL_PLATFORM_DATA mhl_sii9234_device_data = {
 	.gpio_intr = shooter_GPIO_MHL_INT,
 	.gpio_reset = shooter_GPIO_MHL_RESET,
 	.ci2ca = 0,
-	#ifdef CONFIG_FB_MSM_HDMI_MHL
+	#ifdef CONFIG_FB_MSM_HDMI_MHL_SII9234
 	.mhl_usb_switch		= shooter_usb_dpdn_switch,
 	.mhl_1v2_power = mhl_sii9234_1v2_power,
 	#endif
@@ -4793,7 +4793,7 @@ static struct spi_board_info msm_spi_board_info[] __initdata = {
 
 #define PM8901_GPIO_INT           91
 
-#ifdef CONFIG_FB_MSM_HDMI_MHL
+#ifdef CONFIG_FB_MSM_HDMI_MHL_SII9234
 static int pm8901_mpp_init(void)
 {
     int rc;
@@ -5175,7 +5175,6 @@ static struct i2c_registry msm8x60_i2c_devices[] __initdata = {
 		ARRAY_SIZE(msm_i2c_gsbi7_tpa2051d3_info),
 	},
 #endif
-#ifdef CONFIG_FB_MSM_HDMI_MHL
 #ifdef CONFIG_FB_MSM_HDMI_MHL_SII9234
 
 	{
@@ -5185,7 +5184,6 @@ static struct i2c_registry msm8x60_i2c_devices[] __initdata = {
 		ARRAY_SIZE(msm_i2c_gsbi7_mhl_sii9234_info),
 	},
 
-#endif
 #endif
 #if 0
 	{
