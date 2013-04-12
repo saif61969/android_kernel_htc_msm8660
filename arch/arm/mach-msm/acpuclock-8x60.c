@@ -1,4 +1,4 @@
-/* Copyright (c) 2009-2012, Code Aurora Forum. All rights reserved.
+/* Copyright (c) 2009-2011, Code Aurora Forum. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -33,28 +33,6 @@
 #include "acpuclock.h"
 #include "avs.h"
 
-#if defined(pr_debug)
-#undef pr_debug
-#endif
-#define pr_debug(x...) do {				\
-			printk(KERN_DEBUG "[K][ACPU] "x);		\
-	} while (0)
-
-#if defined(pr_info)
-#undef pr_info
-#endif
-#define pr_info(x...) do {				\
-			printk(KERN_INFO "[K][ACPU] "x);		\
-	} while (0)
-
-#if defined(pr_err)
-#undef pr_err
-#endif
-#define pr_err(x...) do {				\
-			printk(KERN_ERR "[K][ACPU] "x);		\
-	} while (0)
-
-
 /* Frequency switch modes. */
 #define SHOT_SWITCH		4
 #define HOP_SWITCH		5
@@ -62,15 +40,13 @@
 #define COMPLEX_SLEW		7
 
 /* PLL calibration limits.
- * The PLL hardware has a minimum frequency of 384MHz.
- * Calibration should respect this limit. */
+ * The PLL hardware is capable of 384MHz to 1512MHz. The L_VALs
+ * used for calibration should respect these limits. */
 #define L_VAL_SCPLL_CAL_MIN	0x08 /* =  432 MHz with 27MHz source */
 #define L_VAL_SCPLL_CAL_MAX	0x24 /* = 1994 MHz with 27MHz source */
 
 #define MAX_VDD_SC		1450000 /* uV */
-#ifdef CONFIG_CPU_VOLTAGE_TABLE
 #define MIN_VDD_SC		 800000 /* uV */
-#endif
 #define MAX_VDD_MEM		1450000 /* uV */
 #define MAX_VDD_DIG		1300000 /* uV */
 #define MAX_AXI			 310500 /* KHz */
@@ -584,11 +560,8 @@ static int acpuclk_8x60_set_rate(int cpu, unsigned long rate,
 			goto out;
 	}
 
-	/* CPU rate change frequently, not proper to be printed by default */
-	/*
 	pr_debug("Switching from ACPU%d rate %u KHz -> %u KHz\n",
 		cpu, strt_s->acpuclk_khz, tgt_s->acpuclk_khz);
-	*/
 
 	/* Switch CPU speed. */
 	switch_sc_speed(cpu, tgt_s);
@@ -638,21 +611,35 @@ unsigned int get_max_cpu_freq(void)
 #endif
 
 #ifdef CONFIG_CPU_VOLTAGE_TABLE
+
 ssize_t acpuclk_get_vdd_levels_str(char *buf) {
+
 	int i, len = 0;
+
 	if (buf) {
 		mutex_lock(&drv_state.lock);
+
 		for (i = 0; acpu_freq_tbl[i].acpuclk_khz; i++) {
+			/* updated to use uv required by 8x60 architecture - faux123 */
 			len += sprintf(buf + len, "%8u: %8d\n", acpu_freq_tbl[i].acpuclk_khz, acpu_freq_tbl[i].vdd_sc );
 		}
+
 		mutex_unlock(&drv_state.lock);
 	}
 	return len;
 }
+
+/* updated to use uv required by 8x60 architecture - faux123 */
 void acpuclk_set_vdd(unsigned int khz, int vdd_uv) {
+
 	int i;
 	unsigned int new_vdd_uv;
+//	int vdd_uv;
+
+//	vdd_uv = vdd_mv * 1000;
+
 	mutex_lock(&drv_state.lock);
+
 	for (i = 0; acpu_freq_tbl[i].acpuclk_khz; i++) {
 		if (khz == 0)
 			new_vdd_uv = min(max((acpu_freq_tbl[i].vdd_sc + vdd_uv), (unsigned int)MIN_VDD_SC), (unsigned int)MAX_VDD_SC);
@@ -660,8 +647,10 @@ void acpuclk_set_vdd(unsigned int khz, int vdd_uv) {
 			new_vdd_uv = min(max((unsigned int)vdd_uv, (unsigned int)MIN_VDD_SC), (unsigned int)MAX_VDD_SC);
 		else 
 			continue;
+
 		acpu_freq_tbl[i].vdd_sc = new_vdd_uv;
 	}
+
 	mutex_unlock(&drv_state.lock);
 }
 #endif	/* CONFIG_CPU_VOTALGE_TABLE */
@@ -888,8 +877,10 @@ int processor_name_read_proc(char *page, char **start, off_t off,
 			   int count, int *eof, void *data)
 {
 	char *p = page;
+
 		p += sprintf(p, "%u", (CONFIG_MSM_CPU_FREQ_MAX/1000));
-		p += sprintf(p, "MHz Dual Core");
+		p += sprintf(p, "MHz x2");
+
 	return p - page;
 }
 
@@ -919,6 +910,7 @@ static int __init acpuclk_8x60_init(struct acpuclk_soc_data *soc_data)
 		for_each_online_cpu(cpu)
 			acpuclk_8x60_set_rate(cpu, 1512000, SETRATE_INIT);
 #endif
+
 
 	acpuclk_register(&acpuclk_8x60_data);
 	cpufreq_table_init();
